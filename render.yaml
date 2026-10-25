@@ -29,5 +29,8 @@ services:
         value: https://homeserve-backend-ss0m.onrender.com/api/ws
     routes:
       - type: rewrite
+        source: /api/*
+        destination: https://homeserve-backend-ss0m.onrender.com/api/*
+      - type: rewrite
         source: /*
         destination: /index.html
