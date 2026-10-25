@@ -26,6 +26,18 @@ const queryClient = new QueryClient({
 });
 
 export default function App() {
+  React.useEffect(() => {
+    // 1. Pre-warm backend immediately on page arrival to eliminate cold start latency
+    const warmUpBackend = () => {
+      fetch('https://homeserve-backend-ss0m.onrender.com/api/categories', { mode: 'cors' }).catch(() => {});
+    };
+    warmUpBackend();
+
+    // 2. Keep backend warm by pinging every 4 minutes while browser tab is open
+    const interval = setInterval(warmUpBackend, 4 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

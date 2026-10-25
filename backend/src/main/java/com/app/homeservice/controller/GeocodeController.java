@@ -21,10 +21,18 @@ import java.util.*;
 public class GeocodeController {
 
     private static final Logger log = LoggerFactory.getLogger(GeocodeController.class);
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Map<String, Object> cache = new java.util.concurrent.ConcurrentHashMap<>();
 
     private static final String USER_AGENT = "HomeServe-Platform/1.0 (contact@homeserve.com)";
+
+    public GeocodeController() {
+        org.springframework.http.client.SimpleClientHttpRequestFactory factory = new org.springframework.http.client.SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(2000);
+        factory.setReadTimeout(2500);
+        this.restTemplate = new RestTemplate(factory);
+    }
 
     @GetMapping("/search")
     @Operation(summary = "Search areas, landmarks, and addresses with autocomplete")

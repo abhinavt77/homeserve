@@ -55,24 +55,26 @@ public class EmailServiceImpl implements EmailService {
     }
 
     private void sendEmailSafely(String to, String subject, String htmlContent) {
-        if (mailSender == null) {
-            logSimulatedEmail(to, subject, htmlContent, "No JavaMailSender bean available");
-            return;
-        }
+        java.util.concurrent.CompletableFuture.runAsync(() -> {
+            if (mailSender == null || fromEmail == null || fromEmail.contains("noreply") || fromEmail.contains(".local")) {
+                logSimulatedEmail(to, subject, htmlContent, "Simulation mode (fast non-blocking dispatch)");
+                return;
+            }
 
-        try {
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(htmlContent, true);
+            try {
+                MimeMessage message = mailSender.createMimeMessage();
+                MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+                helper.setFrom(fromEmail);
+                helper.setTo(to);
+                helper.setSubject(subject);
+                helper.setText(htmlContent, true);
 
-            mailSender.send(message);
-            log.info("Email notification successfully delivered to {} [{}]", to, subject);
-        } catch (Exception ex) {
-            logSimulatedEmail(to, subject, htmlContent, ex.getMessage());
-        }
+                mailSender.send(message);
+                log.info("Email notification successfully delivered to {} [{}]", to, subject);
+            } catch (Exception ex) {
+                logSimulatedEmail(to, subject, htmlContent, ex.getMessage());
+            }
+        });
     }
 
     private void logSimulatedEmail(String to, String subject, String htmlContent, String reason) {
