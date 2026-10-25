@@ -1,7 +1,18 @@
 import axios from 'axios';
 
+const getApiBaseUrl = () => {
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return '/api';
+  }
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl || envUrl === 'https://homeserve-backend.onrender.com/api') {
+    return 'https://homeserve-backend-ss0m.onrender.com/api';
+  }
+  return envUrl;
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: getApiBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },

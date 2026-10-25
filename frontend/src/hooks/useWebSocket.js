@@ -9,7 +9,12 @@ export function useWebSocket() {
   useEffect(() => {
     const token = localStorage.getItem('homeserve_token');
 
-    const wsUrl = import.meta.env.VITE_WS_URL || '/api/ws';
+    let wsUrl = import.meta.env.VITE_WS_URL;
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      wsUrl = '/api/ws';
+    } else if (!wsUrl || wsUrl === 'https://homeserve-backend.onrender.com/api/ws') {
+      wsUrl = 'https://homeserve-backend-ss0m.onrender.com/api/ws';
+    }
 
     // Create STOMP client with SockJS fallback
     const stompClient = new Client({
