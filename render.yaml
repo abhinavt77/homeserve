@@ -17,12 +17,11 @@ services:
         value: https://homeserve-ui.onrender.com,http://localhost:5173
 
   # 2. React Vite Frontend (Free CDN Static Site)
-  - type: static
+  - type: web
     name: homeserve-ui
+    runtime: static
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: ./frontend/dist
-    plan: free
-    region: oregon
     envVars:
       - key: VITE_API_URL
         value: https://homeserve-backend.onrender.com/api
