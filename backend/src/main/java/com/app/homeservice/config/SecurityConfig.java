@@ -88,6 +88,9 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Static web resources & SPA frontend files
+                        .requestMatchers("/", "/index.html", "/assets/**", "/favicon.ico", "/*.svg", "/*.png", "/*.ico", "/*.json", "/*.js", "/*.css").permitAll()
+                        // Public APIs
                         .requestMatchers("/auth/**", "/api/auth/**").permitAll()
                         .requestMatchers("/public/**", "/api/public/**").permitAll()
                         .requestMatchers("/geocode/**", "/api/geocode/**").permitAll()
@@ -101,9 +104,13 @@ public class SecurityConfig {
                                 "/api/swagger-ui/**",
                                 "/api/swagger-ui.html"
                         ).permitAll()
+                        // Role-based secured APIs
                         .requestMatchers("/admin/**", "/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/provider/**", "/api/provider/**").hasRole("PROVIDER")
                         .requestMatchers("/customer/**", "/api/customer/**").hasRole("USER")
+                        .requestMatchers("/api/addresses/**", "/api/payments/**", "/api/reviews/**", "/api/complaints/**", "/api/notifications/**").authenticated()
+                        // Allow all client-side navigation GETs to fetch SPA index.html
+                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

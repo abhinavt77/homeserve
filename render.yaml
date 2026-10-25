@@ -26,13 +26,9 @@ services:
     envVars:
       - key: VITE_API_URL
         value: https://homeserve-backend.onrender.com/api
+      - key: VITE_WS_URL
+        value: https://homeserve-backend.onrender.com/api/ws
     routes:
-      - type: rewrite
-        source: /api/*
-        destination: https://homeserve-backend.onrender.com/api/*
-      - type: rewrite
-        source: /ws/*
-        destination: https://homeserve-backend.onrender.com/ws/*
       - type: rewrite
         source: /*
         destination: /index.html

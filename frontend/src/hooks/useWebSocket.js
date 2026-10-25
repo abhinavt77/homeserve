@@ -9,9 +9,11 @@ export function useWebSocket() {
   useEffect(() => {
     const token = localStorage.getItem('homeserve_token');
 
+    const wsUrl = import.meta.env.VITE_WS_URL || '/api/ws';
+
     // Create STOMP client with SockJS fallback
     const stompClient = new Client({
-      webSocketFactory: () => new SockJS('/ws'),
+      webSocketFactory: () => new SockJS(wsUrl),
       connectHeaders: token ? { Authorization: `Bearer ${token}` } : {},
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,

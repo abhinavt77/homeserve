@@ -7,6 +7,10 @@
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-38bdf8.svg)](https://tailwindcss.com/)
 [![PostgreSQL PostGIS](https://img.shields.io/badge/PostgreSQL-16%20PostGIS-336791.svg)](https://postgis.net/)
 [![Docker Compose](https://img.shields.io/badge/Docker-Compose%20v2-2496ed.svg)](https://www.docker.com/)
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/abhinavt77/homeserve)
+
+**GitHub Repository:** [https://github.com/abhinavt77/homeserve](https://github.com/abhinavt77/homeserve)  
+**1-Click Render Deployment:** [https://render.com/deploy?repo=https://github.com/abhinavt77/homeserve](https://render.com/deploy?repo=https://github.com/abhinavt77/homeserve)
 
 **HomeServe** is an end-to-end, production-grade on-demand home services booking platform (Electrician, Plumber, Cleaner, Carpenter, Painter, AC Repair) built with a strict layered monolith architecture. Customers can request services with Leaflet map geocoding, and nearby verified technicians receive instant WebSocket push notifications to accept jobs in real time with optimistic locking concurrency control.
 
