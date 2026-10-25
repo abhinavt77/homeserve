@@ -1,0 +1,697 @@
+{
+  "info": {
+    "_postman_id": "a9c7b2d5-e234-4b52-965a-8b1f8c3e1001",
+    "name": "HomeServe API Collection",
+    "description": "Production-grade Postman collection for HomeServe On-Demand Home Services Booking Platform.\n\nCovers Authentication, Role-based Access, Service Categories, Leaflet Geocoding Addresses, Geospatial Matching, Optimistic Locking Job Acceptance, Razorpay / Cash Settlement, Technician Reviews, Dispute Management, and Admin Analytics.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "trackingNumber",
+      "value": "HS-SAMPLE",
+      "type": "string"
+    },
+    {
+      "key": "bookingId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login as Customer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.environment.set('token', jsonData.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"customer@homeserve.com\",\n  \"password\": \"Password@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login as Provider (Electrician)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.environment.set('token', jsonData.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"electrician@homeserve.com\",\n  \"password\": \"Password@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login as Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data && jsonData.data.token) {",
+                  "    pm.collectionVariables.set('token', jsonData.data.token);",
+                  "    pm.environment.set('token', jsonData.data.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@homeserve.com\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Register New Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"priya.sharma@example.com\",\n  \"password\": \"Password@123\",\n  \"fullName\": \"Priya Sharma\",\n  \"phone\": \"+919876543299\",\n  \"role\": \"USER\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Register New Provider",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"vikram.plumber@example.com\",\n  \"password\": \"Password@123\",\n  \"fullName\": \"Vikram Singh\",\n  \"phone\": \"+919876543288\",\n  \"role\": \"PROVIDER\",\n  \"categoryId\": 2,\n  \"experienceYears\": 6,\n  \"hourlyRate\": 250.00,\n  \"bio\": \"Expert in leak repair and bathroom fittings\",\n  \"documentUrl\": \"https://res.cloudinary.com/demo/image/upload/sample.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Get Current Authenticated User",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Service Categories",
+      "item": [
+        {
+          "name": "List All Active Categories (Public)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"]
+            }
+          }
+        },
+        {
+          "name": "Create New Category (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"AC Repair & Service\",\n  \"code\": \"AC_REPAIR\",\n  \"description\": \"Comprehensive servicing, gas refilling, and repairs for all AC brands\",\n  \"basePrice\": 499.00,\n  \"hourlyRate\": 299.00,\n  \"iconName\": \"Wind\",\n  \"active\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Customer Addresses",
+      "item": [
+        {
+          "name": "Add Service Address (Leaflet Coordinates)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Home\",\n  \"street\": \"Flat 402, Sunshine Residency, Indiranagar\",\n  \"city\": \"Bangalore\",\n  \"state\": \"Karnataka\",\n  \"postalCode\": \"560038\",\n  \"latitude\": 12.9784,\n  \"longitude\": 77.6408,\n  \"isDefault\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customer/addresses",
+              "host": ["{{baseUrl}}"],
+              "path": ["customer", "addresses"]
+            }
+          }
+        },
+        {
+          "name": "Get My Saved Addresses",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/customer/addresses",
+              "host": ["{{baseUrl}}"],
+              "path": ["customer", "addresses"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Provider Profile & Status",
+      "item": [
+        {
+          "name": "Get Provider Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/provider/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["provider", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Toggle Online / Offline Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"isOnline\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/provider/profile/availability",
+              "host": ["{{baseUrl}}"],
+              "path": ["provider", "profile", "availability"]
+            }
+          }
+        },
+        {
+          "name": "Update Live GPS Location",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"latitude\": 12.9716,\n  \"longitude\": 77.5946\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/provider/profile/location",
+              "host": ["{{baseUrl}}"],
+              "path": ["provider", "profile", "location"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Booking & Dispatch Flow",
+      "item": [
+        {
+          "name": "1. Customer Create Booking (PENDING)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.data) {",
+                  "    if (jsonData.data.trackingNumber) {",
+                  "        pm.collectionVariables.set('trackingNumber', jsonData.data.trackingNumber);",
+                  "    }",
+                  "    if (jsonData.data.id) {",
+                  "        pm.collectionVariables.set('bookingId', jsonData.data.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": 1,\n  \"addressId\": 1,\n  \"description\": \"Main switch tripping continuously in master bedroom\",\n  \"scheduledAt\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customer/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["customer", "bookings"]
+            }
+          }
+        },
+        {
+          "name": "2. Track Booking Live (By Tracking #)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/customer/bookings/track/{{trackingNumber}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["customer", "bookings", "track", "{{trackingNumber}}"]
+            }
+          }
+        },
+        {
+          "name": "3. Provider Check Nearby Available Jobs",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/provider/jobs/available",
+              "host": ["{{baseUrl}}"],
+              "path": ["provider", "jobs", "available"]
+            }
+          }
+        },
+        {
+          "name": "4. Provider Accept Job (Optimistic Locking Winner)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/provider/jobs/{{bookingId}}/accept",
+              "host": ["{{baseUrl}}"],
+              "path": ["provider", "jobs", "{{bookingId}}", "accept"]
+            }
+          }
+        },
+        {
+          "name": "5. Provider Update Status: ON_THE_WAY",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ON_THE_WAY\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/provider/jobs/{{bookingId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["provider", "jobs", "{{bookingId}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "6. Provider Update Status: IN_PROGRESS",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/provider/jobs/{{bookingId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["provider", "jobs", "{{bookingId}}", "status"]
+            }
+          }
+        },
+        {
+          "name": "7. Provider Complete Job (Sets Final Cost)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\",\n  \"finalCost\": 350.00\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/provider/jobs/{{bookingId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["provider", "jobs", "{{bookingId}}", "status"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Razorpay & Cash Payments",
+      "item": [
+        {
+          "name": "1. Create Razorpay Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/customer/payments/create-order/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["customer", "payments", "create-order", "{{bookingId}}"]
+            }
+          }
+        },
+        {
+          "name": "2. Verify Razorpay Payment (HMAC SHA-256)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"razorpayOrderId\": \"order_sample123\",\n  \"razorpayPaymentId\": \"pay_sample456\",\n  \"razorpaySignature\": \"sample_signature\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customer/payments/verify/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["customer", "payments", "verify", "{{bookingId}}"]
+            }
+          }
+        },
+        {
+          "name": "3. Settle with Cash (Instant Settlement)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/customer/payments/cash/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["customer", "payments", "cash", "{{bookingId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Reviews & Ratings",
+      "item": [
+        {
+          "name": "Submit Star Rating & Review for Completed Booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"comment\": \"Punctual, polite, and resolved our wiring issue within 30 minutes!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customer/reviews/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["customer", "reviews", "{{bookingId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Review for Booking",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/customer/reviews/booking/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["customer", "reviews", "booking", "{{bookingId}}"]
+            }
+          }
+        },
+        {
+          "name": "Get Provider Public Reviews",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/public/providers/2/reviews",
+              "host": ["{{baseUrl}}"],
+              "path": ["public", "providers", "2", "reviews"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Complaints & Disputes",
+      "item": [
+        {
+          "name": "Customer File Complaint",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"requestId\": 1,\n  \"subject\": \"Overcharging dispute\",\n  \"description\": \"Technician demanded extra cash above the app quote.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customer/complaints",
+              "host": ["{{baseUrl}}"],
+              "path": ["customer", "complaints"]
+            }
+          }
+        },
+        {
+          "name": "Admin View All Complaints",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/complaints",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "complaints"]
+            }
+          }
+        },
+        {
+          "name": "Admin Resolve Complaint Ticket",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"RESOLVED\",\n  \"resolutionNotes\": \"Refund of excess charges processed to customer wallet. Warning issued to technician.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/complaints/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "complaints", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "9. Admin Management",
+      "item": [
+        {
+          "name": "Get Dashboard KPIs & Revenue Analytics",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "stats"]
+            }
+          }
+        },
+        {
+          "name": "List All Providers (Filter: Pending)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/providers?verified=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "providers"],
+              "query": [
+                { "key": "verified", "value": "false" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Approve Provider Verification",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/providers/1/verify?approved=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "providers", "1", "verify"],
+              "query": [
+                { "key": "approved", "value": "true" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List All System Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "bookings"]
+            }
+          }
+        },
+        {
+          "name": "List All Payment Ledger Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/payments",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "payments"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

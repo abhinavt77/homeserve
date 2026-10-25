@@ -1,0 +1,38 @@
+services:
+  # 1. Spring Boot Backend Web Service (Free Tier)
+  - type: web
+    name: homeserve-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: oregon
+    healthCheckPath: /api/categories
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: local
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://homeserve-ui.onrender.com,http://localhost:5173
+
+  # 2. React Vite Frontend (Free CDN Static Site)
+  - type: static
+    name: homeserve-ui
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    plan: free
+    region: oregon
+    envVars:
+      - key: VITE_API_URL
+        value: https://homeserve-backend.onrender.com/api
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://homeserve-backend.onrender.com/api/*
+      - type: rewrite
+        source: /ws/*
+        destination: https://homeserve-backend.onrender.com/ws/*
+      - type: rewrite
+        source: /*
+        destination: /index.html

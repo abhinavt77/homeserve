@@ -1,0 +1,18 @@
+package com.app.homeservice.repository;
+
+import com.app.homeservice.entity.Role;
+import com.app.homeservice.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
+    boolean existsByEmail(String email);
+    List<User> findByRole(Role role);
+    List<User> findAllByOrderByCreatedAtDesc();
+    long countByRole(Role role);
+}

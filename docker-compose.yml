@@ -1,0 +1,71 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    container_name: homeserve-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME:-homeservedb}
+      POSTGRES_USER: ${DB_USER:-homeserve_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-homeserve_pass}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-homeserve_user} -d ${DB_NAME:-homeservedb}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - homeserve-net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: homeserve-backend
+    restart: on-failure
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-homeservedb}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-homeserve_user}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-homeserve_pass}
+      JWT_SECRET: ${JWT_SECRET:-404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-rzp_test_homeserveKeyId123}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-homeserveRazorpaySecretMock456}
+      RAZORPAY_CURRENCY: ${RAZORPAY_CURRENCY:-INR}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-homeserve-cloud}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-123456789012345}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-homeserve_cloudinary_secret_sample}
+      SPRING_MAIL_HOST: ${SPRING_MAIL_HOST:-smtp.gmail.com}
+      SPRING_MAIL_PORT: ${SPRING_MAIL_PORT:-587}
+      SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME:-noreply@homeserve.local}
+      SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD:-password}
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    networks:
+      - homeserve-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: homeserve-frontend
+    restart: on-failure
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    networks:
+      - homeserve-net
+
+networks:
+  homeserve-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
